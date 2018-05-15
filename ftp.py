@@ -24,7 +24,7 @@ if args.mode =="CLIENT":
     from ftplib import FTP
     ftp = FTP()
     ftp.connect(args.adress, args.port)
-    ftp.login(user="admin", passwd="kazkoks")
+    ftp.login(user="admin", passwd="blabla")
     ftp.cwd("Download")
     logging.warning(ftp.getwelcome())
 
