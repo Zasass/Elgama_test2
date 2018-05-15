@@ -32,7 +32,7 @@ if args.mode =="CLIENT":
         ftp.dir()
 
     if args.find:
-        logging.warning("ieskom failo")
+        logging.warning("failo paieskos algoritmas")
 
     if args.retrieve:
         local_filename = "/Users/andzst/Desktop/python/" + args.retrieve
