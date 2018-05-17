@@ -24,33 +24,7 @@ args = parser.parse_args()
 
 
 if args.mode =="CLIENT":
-    """""
-    from ftplib import FTP
-    ftp = FTP()
-    ftp.connect(args.adress, args.port)
-    ftp.login(user="admin", passwd="blabla")
-    ftp.cwd("Download")
-    logging.warning(ftp.getwelcome())
 
-    if args.dir:
-        ftp.dir()
-
-    if args.find:
-        logging.warning("failo paieskos algoritmas")
-
-    if args.retrieve:
-        local_filename = "/Users/andzst/Desktop/python/" + args.retrieve
-        lf = open(local_filename, "wb")
-        ftp.retrbinary("RETR " + args.retrieve, lf.write, 8 * 1024)
-        lf.close()
-        logging.warning("Failas: " + args.retrieve + " atsiustas")
-
-    ftp.quit()
- 
-
-
-    import socket
-    """
    # s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     socket.setdefaulttimeout(20)
     conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -91,7 +65,7 @@ while True:
             conn.send(b'vykdom c komanda')
         elif command[0] == "-f":
             if os.path.isfile(command[1]) and os.access(command[1], os.R_OK):
-                conn.send('Failas egzistuoja ir nuskaitomas')
+                conn.send(b'Failas egzistuoja ir nuskaitomas')
             else:
                 conn.send(b'Failas neegzistuoja arba nera nuskaitomas')
         elif command[0] == 'kill':
