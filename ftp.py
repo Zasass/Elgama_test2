@@ -1,5 +1,8 @@
 # encoding: utf8
 
+import sys, socket, subprocess
+import os.path
+
 
 import argparse
 import logging
@@ -21,6 +24,7 @@ args = parser.parse_args()
 
 
 if args.mode =="CLIENT":
+    """""
     from ftplib import FTP
     ftp = FTP()
     ftp.connect(args.adress, args.port)
@@ -42,15 +46,58 @@ if args.mode =="CLIENT":
         logging.warning("Failas: " + args.retrieve + " atsiustas")
 
     ftp.quit()
+ 
+
+
+    import socket
+    """
+   # s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    socket.setdefaulttimeout(20)
+    conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    socksize = 1024
+    conn.connect((args.adress, args.port))
+    conn.settimeout(30)
+    logging.warning(conn.recv(socksize))
+    while True:
+        shell = input("$ ")
+        if shell== 'kill':
+            conn.close()
+            sys.exit()
+        conn.send(shell.encode())
+        data = conn.recv(socksize)
+        logging.warning(data)
+
 
 if args.mode=="SERVER":
-    from pyftpdlib.authorizers import DummyAuthorizer
-    from pyftpdlib.servers import FTPServer
-    authorizer = ftpserver.DummyAuthorizer()
-    authorizer.add_user("todd", "123", "/Users/andzst/Desktop/python")
-    handler = ftpserver.FTPHandler
-    handler.authorizer = authorizer
-    connection = ("localhost", 21)
-    ftpd = ftpserver.FTPServer(connection, handler)
-    ftpd.serve_forever()
+    #socket.setdefaulttimeout(60)
+    socksize = 1024
+
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.bind((args.adress, args.port))
+    logging.warning("Server started on port: %s" % args.port)
+    s.listen(5)
+    logging.warning("Now listening...\n")
+    conn, addr = s.accept()
+    #conn.settimeout(30)
+    logging.warning('New connection from %s:%d' % (addr[0], addr[1]))
+    conn.send(('sveiki prisijunge %s:%d' % (addr[0], addr[1])).encode())
+while True:
+
+        data = conn.recv(socksize)
+        logging.warning(data)
+        #
+        command = data.decode().split(" ")
+        if command[0] == "-c":
+            conn.send(b'vykdom c komanda')
+        elif command[0] == "-f":
+            if os.path.isfile(command[1]) and os.access(command[1], os.R_OK):
+                conn.send('Failas egzistuoja ir nuskaitomas')
+            else:
+                conn.send(b'Failas neegzistuoja arba nera nuskaitomas')
+        elif command[0] == 'kill':
+            sys.exit()
+        else:
+            conn.send(b'Tokia komanda neegzistuoja')
+
+
 
